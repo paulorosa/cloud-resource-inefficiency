@@ -30,9 +30,43 @@ Desenvolvida seguindo os princípios **SOLID**, padrões de projeto Orientados a
 
 ---
 
-## 🚀 Instalação
+## 📦 Como Usar em Outros Projetos (`requirements.txt`)
+
+Para utilizar esta biblioteca em qualquer outro projeto Python, basta adicioná-la diretamente ao arquivo `requirements.txt` do seu projeto consumidor.
+
+### 1. No arquivo `requirements.txt` do seu projeto:
+
+```text
+# Opção A: Instalar a versão mais recente da branch main (via HTTPS)
+git+https://github.com/paulorosa/cloud-resource-inefficiency.git
+
+# Opção B (Recomendada para Produção): Fixar em uma tag ou versão específica
+git+https://github.com/paulorosa/cloud-resource-inefficiency.git@v0.1.0
+
+# Opção C: Usando SSH (para repositórios privados com chave SSH)
+git+ssh://git@github.com/paulorosa/cloud-resource-inefficiency.git
+
+# Opção D: Desenvolvimento local em modo editável (mesma máquina)
+-e ../cloud-resource-inefficiency
+```
+
+### 2. No terminal do projeto consumidor:
 
 ```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 🚀 Instalação Direta via CLI (Opcional)
+
+Se preferir instalar diretamente no ambiente virtual sem usar `requirements.txt`:
+
+```bash
+# Instalação direta do repositório remoto
+pip install git+https://github.com/paulorosa/cloud-resource-inefficiency.git
+
+# Ou clonando localmente
 git clone https://github.com/paulorosa/cloud-resource-inefficiency.git
 cd cloud-resource-inefficiency
 pip install -e .
