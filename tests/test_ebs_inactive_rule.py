@@ -1,4 +1,4 @@
-"""Unit tests for CER-0066 (Inactive and Detached EBS Volume)."""
+"""Unit tests for AWS-EBS-001 (Inactive and Detached EBS Volume)."""
 
 from datetime import datetime, timezone
 import unittest
@@ -100,7 +100,7 @@ class TestInactiveDetachedEBSVolumeRule(unittest.TestCase):
 
     def test_rule_detects_opportunity_for_detached_and_zero_io(self):
         rule = InactiveDetachedEBSVolumeRule(lookback_days=14)
-        self.assertEqual(rule.rule_id, "CER-0066")
+        self.assertEqual(rule.rule_id, "AWS-EBS-001")
         self.assertEqual(rule.category, InefficiencyCategory.UNATTACHED_STORAGE)
 
         opportunity = rule.evaluate(
@@ -110,7 +110,7 @@ class TestInactiveDetachedEBSVolumeRule(unittest.TestCase):
         )
 
         self.assertIsNotNone(opportunity)
-        self.assertEqual(opportunity.rule_id, "CER-0066")
+        self.assertEqual(opportunity.rule_id, "AWS-EBS-001")
         self.assertEqual(opportunity.estimated_monthly_savings, 8.0)
         self.assertEqual(opportunity.currency, "USD")
         self.assertEqual(opportunity.risk_level, RiskLevel.LOW)

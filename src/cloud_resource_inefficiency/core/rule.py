@@ -14,7 +14,7 @@ class BaseInefficiencyRule(ABC):
     @property
     @abstractmethod
     def rule_id(self) -> str:
-        """Unique identifier for the rule (e.g., CER-0066 or AWS-EBS-001)."""
+        """Unique identifier for the rule (e.g., AWS-EBS-001 or GCP-GCS-001)."""
         pass
 
     @property
