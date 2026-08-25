@@ -100,7 +100,7 @@ class TestInactiveDetachedEBSVolumeRule(unittest.TestCase):
 
     def test_rule_detects_opportunity_for_detached_and_zero_io(self):
         rule = InactiveDetachedEBSVolumeRule(lookback_days=14)
-        self.assertEqual(rule.rule_id, "CER-0066")
+        self.assertEqual(rule.rule_id, "AWS-EBS-001")
         self.assertEqual(rule.category, InefficiencyCategory.UNATTACHED_STORAGE)
 
         opportunity = rule.evaluate(
