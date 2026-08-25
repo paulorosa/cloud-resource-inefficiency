@@ -109,7 +109,7 @@ class TestScannerIntegration(unittest.TestCase):
         self.assertEqual(result.total_estimated_monthly_savings, 8.0)
 
         opp = result.opportunities[0]
-        self.assertEqual(opp.rule_id, "CER-0066")
+        self.assertEqual(opp.rule_id, "AWS-EBS-001")
         self.assertEqual(opp.resource.resource_id, "vol-0123456789abcdef0")
         self.assertEqual(opp.estimated_monthly_savings, 8.0)
 
