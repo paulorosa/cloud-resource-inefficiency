@@ -1,4 +1,4 @@
-"""Detection rule for Inactive and Detached EBS Volumes (CER-0066)."""
+"""Detection rule for Inactive and Detached EBS Volumes (AWS-EBS-001)."""
 
 from datetime import datetime, timedelta, timezone
 import logging
@@ -20,7 +20,7 @@ AWS_REGION_PATTERN = re.compile(r"^[a-z]{2}(-[a-z]+)+-\d+$")
 class InactiveDetachedEBSVolumeRule(BaseInefficiencyRule):
     """
     Identifies detached (unattached) EBS volumes with zero or negligible I/O
-    activity over a lookback window (CER-0066).
+    activity over a lookback window (AWS-EBS-001).
     """
 
     def __init__(
@@ -33,7 +33,7 @@ class InactiveDetachedEBSVolumeRule(BaseInefficiencyRule):
 
     @property
     def rule_id(self) -> str:
-        return "CER-0066"
+        return "AWS-EBS-001"
 
     @property
     def title(self) -> str:
@@ -172,7 +172,6 @@ class InactiveDetachedEBSVolumeRule(BaseInefficiencyRule):
         }
 
         metadata = {
-            "cer_code": "CER-0066",
             "volume_type": raw_meta.get("volume_type"),
             "size_gib": raw_meta.get("size_gib"),
             "iops": raw_meta.get("iops"),

@@ -1,4 +1,4 @@
-"""Unit tests for CER-0066 (Inactive and Detached EBS Volume)."""
+"""Unit tests for AWS-EBS-001 (Inactive and Detached EBS Volume)."""
 
 from datetime import datetime, timezone
 import unittest
