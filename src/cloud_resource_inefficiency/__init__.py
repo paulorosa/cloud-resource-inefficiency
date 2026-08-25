@@ -38,7 +38,7 @@ from .providers.aws import (
     register_aws_provider,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     # Core Enums
