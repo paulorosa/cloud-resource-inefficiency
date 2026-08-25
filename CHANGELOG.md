@@ -22,3 +22,8 @@ e este projeto adere ao [Semantic Versioning (SemVer)](https://semver.org/lang/p
 - **Formatadores de Saída**: `ScanResultFormatter` com suporte para Texto (Console/ASCII), Markdown renderizável e JSON serializável.
 - **Arquitetura Base**: Design baseado em padrões SOLID (Strategy, Registry, DTOs imutáveis com `dataclasses`).
 - **Suíte de Testes**: Testes unitários e de integração utilizando mocks (100% isolados de credenciais reais).
+### Security
+- **Defesa contra Falsos Positivos de Deleção**: `InactiveDetachedEBSVolumeRule` agora aborta a sugestão de deleção se as métricas do CloudWatch falharem com erro de permissão ou timeout.
+- **Sanitização de Saída Markdown**: Prevenção de quebra de layout e injeção de HTML/Markdown no formatador de relatórios.
+- **Sanitização de Comandos CLI**: Validação estrita de IDs e regiões para evitar injeção de parâmetros nos comandos de remediação.
+- **Thread-Safety**: Proteção de concorrência com `threading.Lock` nos caches de instâncias de clientes boto3 e tabelas de precificação.

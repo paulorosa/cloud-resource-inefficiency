@@ -1,12 +1,20 @@
 """Detection rule for Inactive and Detached EBS Volumes (CER-0066)."""
 
 from datetime import datetime, timedelta, timezone
+import logging
+import re
 from typing import Any, Dict, List, Optional
 
 from cloud_resource_inefficiency.core.enums import CloudProvider, ConfidenceLevel, InefficiencyCategory, ResourceType, RiskLevel
 from cloud_resource_inefficiency.core.interfaces import BaseMetricsProvider, BasePricingProvider
 from cloud_resource_inefficiency.core.models import CloudResource, Opportunity
 from cloud_resource_inefficiency.core.rule import BaseInefficiencyRule
+
+logger = logging.getLogger(__name__)
+
+# Strict regex for AWS Resource and Region IDs
+AWS_VOLUME_ID_PATTERN = re.compile(r"^vol-[0-9a-zA-Z]+$")
+AWS_REGION_PATTERN = re.compile(r"^[a-z]{2}(-[a-z]+)+-\d+$")
 
 
 class InactiveDetachedEBSVolumeRule(BaseInefficiencyRule):
@@ -97,6 +105,20 @@ class InactiveDetachedEBSVolumeRule(BaseInefficiencyRule):
             statistic="Sum",
         )
 
+        # Defensive Check: If CloudWatch metric collection failed with an ERROR (e.g. AccessDenied),
+        # do NOT flag the volume as inactive to avoid recommending deletion on permission failures.
+        if (
+            read_ops_summary.additional_info.get("status") == "ERROR"
+            or write_ops_summary.additional_info.get("status") == "ERROR"
+        ):
+            logger.warning(
+                "Skipping volume %s evaluation due to CloudWatch metric errors (read: %s, write: %s)",
+                resource.resource_id,
+                read_ops_summary.additional_info.get("status"),
+                write_ops_summary.additional_info.get("status"),
+            )
+            return None
+
         total_io_ops = read_ops_summary.total_value + write_ops_summary.total_value
         if total_io_ops > max_allowed_io:
             # Volume had read/write activity recently
@@ -132,13 +154,17 @@ class InactiveDetachedEBSVolumeRule(BaseInefficiencyRule):
         vol_id = resource.resource_id
         region = resource.region
 
+        # Defensive sanitization for CLI command generation
+        safe_vol_id = vol_id if AWS_VOLUME_ID_PATTERN.match(vol_id) else re.sub(r"[^a-zA-Z0-9_-]", "", vol_id)
+        safe_region = region if AWS_REGION_PATTERN.match(region) else re.sub(r"[^a-zA-Z0-9_-]", "", region)
+
         recommended_actions = [
-            f"Confirm with volume owner if data in volume '{vol_id}' is still required.",
-            f"Create a safety snapshot before deleting: 'aws ec2 create-snapshot --volume-id {vol_id} --region {region} --description \"Backup before deletion of unused volume\"'",
-            f"Delete the unattached volume to save approximately ${monthly_savings:.2f}/month: 'aws ec2 delete-volume --volume-id {vol_id} --region {region}'",
+            f"Confirm with volume owner if data in volume '{safe_vol_id}' is still required.",
+            f"Create a safety snapshot before deleting: 'aws ec2 create-snapshot --volume-id {safe_vol_id} --region {safe_region} --description \"Backup before deletion of unused volume\"'",
+            f"Delete the unattached volume to save approximately ${monthly_savings:.2f}/month: 'aws ec2 delete-volume --volume-id {safe_vol_id} --region {safe_region}'",
         ]
 
-        remediation_command = f"aws ec2 delete-volume --volume-id {vol_id} --region {region}"
+        remediation_command = f"aws ec2 delete-volume --volume-id {safe_vol_id} --region {safe_region}"
 
         evaluated_metrics = {
             "VolumeReadOps": read_ops_summary,

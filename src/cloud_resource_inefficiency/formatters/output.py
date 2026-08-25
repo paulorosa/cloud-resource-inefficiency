@@ -51,6 +51,17 @@ class ScanResultFormatter:
         return "\n".join(lines)
 
     @staticmethod
+    def _escape_md_cell(text: Any) -> str:
+        """Sanitizes text for safe inclusion inside Markdown table cells."""
+        if text is None:
+            return "-"
+        s = str(text).replace("\r\n", " ").replace("\n", " ").replace("\r", " ")
+        s = s.replace("|", "\\|")
+        # Prevent HTML injection while maintaining readability
+        s = s.replace("<", "&lt;").replace(">", "&gt;")
+        return s.strip()
+
+    @staticmethod
     def to_markdown(result: ScanResult) -> str:
         """Generate a GitHub-flavored Markdown report."""
         md = [
@@ -75,10 +86,17 @@ class ScanResultFormatter:
                 "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
             ])
             for opp in result.opportunities:
-                name = opp.resource.name or "-"
-                action = opp.recommended_actions[0] if opp.recommended_actions else "-"
+                rule_id = ScanResultFormatter._escape_md_cell(opp.rule_id)
+                res_id = ScanResultFormatter._escape_md_cell(opp.resource.resource_id)
+                name = ScanResultFormatter._escape_md_cell(opp.resource.name)
+                region = ScanResultFormatter._escape_md_cell(opp.resource.region)
+                action = (
+                    ScanResultFormatter._escape_md_cell(opp.recommended_actions[0])
+                    if opp.recommended_actions
+                    else "-"
+                )
                 md.append(
-                    f"| `{opp.rule_id}` | `{opp.resource.resource_id}` | {name} | `{opp.resource.region}` | "
+                    f"| `{rule_id}` | `{res_id}` | {name} | `{region}` | "
                     f"**${opp.estimated_monthly_savings:.2f}** | {opp.risk_level.value} | {opp.confidence_level.value} | {action} |"
                 )
 

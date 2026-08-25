@@ -2,6 +2,7 @@
 
 import json
 import logging
+import threading
 from typing import Any, Dict, Optional
 
 from cloud_resource_inefficiency.core.enums import CloudProvider, ResourceType
@@ -45,6 +46,7 @@ class AWSPricingProvider(BasePricingProvider):
         self._client_factory = client_factory or AWSClientFactory()
         self._use_remote_api = use_remote_api
         self._pricing_cache: Dict[str, float] = {}
+        self._lock = threading.Lock()
 
     @property
     def provider(self) -> CloudProvider:
@@ -119,14 +121,16 @@ class AWSPricingProvider(BasePricingProvider):
     def _get_ebs_storage_rate(self, region: str, volume_type: str) -> tuple[float, str]:
         """Fetch storage rate from cache, Pricing API, or fallback tables."""
         cache_key = f"ebs_storage:{region}:{volume_type}"
-        if cache_key in self._pricing_cache:
-            return self._pricing_cache[cache_key], "pricing_cache"
+        with self._lock:
+            if cache_key in self._pricing_cache:
+                return self._pricing_cache[cache_key], "pricing_cache"
 
         if self._use_remote_api:
             try:
                 rate = self._fetch_rate_from_aws_pricing_api(region, volume_type)
                 if rate is not None:
-                    self._pricing_cache[cache_key] = rate
+                    with self._lock:
+                        self._pricing_cache[cache_key] = rate
                     return rate, "aws_pricing_api"
             except Exception as exc:
                 logger.debug("Failed to fetch from AWS Pricing API (%s), using default rates: %s", cache_key, exc)
@@ -134,7 +138,8 @@ class AWSPricingProvider(BasePricingProvider):
         # Fallback to local default rates
         regional_rates = DEFAULT_EBS_STORAGE_RATES_PER_GIB.get(region, FALLBACK_STORAGE_RATES)
         rate = regional_rates.get(volume_type, FALLBACK_STORAGE_RATES.get(volume_type, 0.10))
-        self._pricing_cache[cache_key] = rate
+        with self._lock:
+            self._pricing_cache[cache_key] = rate
         return rate, "default_rates_table"
 
     def _fetch_rate_from_aws_pricing_api(self, region: str, volume_type: str) -> Optional[float]:

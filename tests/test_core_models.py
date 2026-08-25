@@ -104,6 +104,31 @@ class TestCoreModels(unittest.TestCase):
         self.assertIn("# Cloud Financial Inefficiency Scan Report", md_out)
         self.assertIn("**$30.00 USD**", md_out)
 
+    def test_markdown_formatter_sanitizes_injection_and_pipes(self):
+        res = CloudResource(
+            resource_id="vol-12345",
+            name="app|database\n<script>alert(1)</script>",
+            provider=CloudProvider.AWS,
+            resource_type=ResourceType.AWS_EBS_VOLUME,
+            region="us-east-1",
+        )
+        opp = Opportunity(
+            rule_id="CER-0066",
+            title="Test",
+            description="Desc",
+            category=InefficiencyCategory.UNATTACHED_STORAGE,
+            resource=res,
+            estimated_monthly_savings=10.0,
+            recommended_actions=["Action with | pipe and <tags>"],
+        )
+        result = ScanResult(opportunities=[opp], scanned_resources_count=1)
+        md_out = ScanResultFormatter.to_markdown(result)
+
+        # Ensure pipes are escaped and HTML is sanitized
+        self.assertIn(r"app\|database &lt;script&gt;alert(1)&lt;/script&gt;", md_out)
+        self.assertIn(r"Action with \| pipe and &lt;tags&gt;", md_out)
+        self.assertNotIn("<script>", md_out)
+
     def test_registry_operations(self):
         registry = InefficiencyRegistry()
         self.assertEqual(len(registry.get_all_rules()), 0)

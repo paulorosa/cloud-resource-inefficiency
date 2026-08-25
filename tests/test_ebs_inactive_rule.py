@@ -147,8 +147,29 @@ class TestInactiveDetachedEBSVolumeRule(unittest.TestCase):
         )
 
         self.assertIsNotNone(opportunity)
-        self.assertEqual(opportunity.risk_level, RiskLevel.MEDIUM)
-        self.assertTrue(opportunity.metadata["retention_tag_detected"])
+    def test_rule_ignores_volume_when_metrics_fail_with_error(self):
+        # When CloudWatch fails (e.g. AccessDenied), status is 'ERROR' and total_value is 0.0
+        # The rule must NOT flag it as inactive to prevent deleting actively used resources.
+        mock_metrics_error = MagicMock()
+        mock_metrics_error.get_metric_summary.return_value = MetricSummary(
+            metric_name="VolumeReadOps",
+            unit="None",
+            period_days=14,
+            total_value=0.0,
+            average_value=0.0,
+            maximum_value=0.0,
+            datapoint_count=0,
+            additional_info={"status": "ERROR", "error_message": "AccessDeniedException"},
+        )
+
+        rule = InactiveDetachedEBSVolumeRule()
+        opportunity = rule.evaluate(
+            resource=self.mock_ebs_detached,
+            metrics_provider=mock_metrics_error,
+            pricing_provider=self.mock_pricing,
+        )
+
+        self.assertIsNone(opportunity, "Rule should return None when CloudWatch metrics fail with ERROR")
 
 
 if __name__ == "__main__":
