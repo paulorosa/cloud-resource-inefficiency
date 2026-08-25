@@ -110,7 +110,7 @@ class TestInactiveDetachedEBSVolumeRule(unittest.TestCase):
         )
 
         self.assertIsNotNone(opportunity)
-        self.assertEqual(opportunity.rule_id, "CER-0066")
+        self.assertEqual(opportunity.rule_id, "AWS-EBS-001")
         self.assertEqual(opportunity.estimated_monthly_savings, 8.0)
         self.assertEqual(opportunity.currency, "USD")
         self.assertEqual(opportunity.risk_level, RiskLevel.LOW)
