@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cloud-resource-inefficiency"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Python library for detecting financial opportunities and cost inefficiencies across multi-cloud resources."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -33,6 +33,9 @@ dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
 ]
+
+[tool.setuptools.dynamic]
+version = { attr = "cloud_resource_inefficiency.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["src"]

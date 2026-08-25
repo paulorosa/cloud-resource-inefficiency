@@ -12,7 +12,7 @@ from cloud_resource_inefficiency.core.rule import BaseInefficiencyRule
 class InactiveDetachedEBSVolumeRule(BaseInefficiencyRule):
     """
     Identifies detached (unattached) EBS volumes with zero or negligible I/O
-    activity over a lookback window (PointFive CER-0066).
+    activity over a lookback window (CER-0066).
     """
 
     def __init__(
@@ -147,7 +147,6 @@ class InactiveDetachedEBSVolumeRule(BaseInefficiencyRule):
 
         metadata = {
             "cer_code": "CER-0066",
-            "pointfive_reference": "https://hub.pointfive.co/inefficiencies/inactive-and-detached-ebs-volume",
             "volume_type": raw_meta.get("volume_type"),
             "size_gib": raw_meta.get("size_gib"),
             "iops": raw_meta.get("iops"),

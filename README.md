@@ -11,7 +11,7 @@ Desenvolvida seguindo os princípios **SOLID**, padrões de projeto Orientados a
 
 ## 🎯 Oportunidades Implementadas
 
-### 1. Inactive and Detached EBS Volume ([PointFive CER-0066](https://hub.pointfive.co/inefficiencies/inactive-and-detached-ebs-volume))
+### 1. Inactive and Detached EBS Volume (CER-0066)
 - **Provedor**: AWS
 - **Recurso**: AWS EBS Volume (`aws_ebs_volume`)
 - **Categoria**: `Unattached Storage`
@@ -118,6 +118,77 @@ for opp in result.opportunities:
 
 ---
 
+## 📊 Exemplo de Saída da Execução
+
+Ao executar o scanner em uma conta com volumes ociosos ou não anexados, o `cloud-resource-inefficiency` disponibiliza múltiplos formatos de saída:
+
+### 1. Resumo em Texto (Terminal / Logs)
+
+```text
+======================================================================
+               CLOUD FINANCIAL INEFFICIENCY SCAN REPORT
+======================================================================
+Total Scanned Resources: 12
+Opportunities Found:     2
+Total Monthly Savings:   $75.20 USD
+Annual Projected Saving: $902.40 USD
+----------------------------------------------------------------------
+Rule ID    | Resource ID            | Region       | Savings/Mo   | Risk    
+----------------------------------------------------------------------
+CER-0066   | vol-0123456789abcdef0  | us-east-1    | $    48.00   | LOW     
+CER-0066   | vol-0987654321fedcba1  | sa-east-1    | $    27.20   | MEDIUM  
+======================================================================
+```
+
+### 2. Relatório Renderizado (Markdown)
+
+| Rule | Resource ID | Name | Region | Monthly Savings | Risk Level | Confidence | Action |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `CER-0066` | `vol-0123456789abcdef0` | `app-legacy-temp` | `us-east-1` | **$48.00** | LOW | HIGH | Create snapshot and delete detached volume |
+| `CER-0066` | `vol-0987654321fedcba1` | `db-backup-old` | `sa-east-1` | **$27.20** | MEDIUM | HIGH | Verify retention tags before deletion |
+
+---
+
+### 3. Payload JSON (Para pipelines CI/CD e automações)
+
+<details>
+<summary>👉 Clique aqui para ver o JSON estruturado retornado</summary>
+
+```json
+{
+  "scanned_resources_count": 12,
+  "opportunities_count": 2,
+  "total_estimated_monthly_savings": 75.20,
+  "currency": "USD",
+  "opportunities": [
+    {
+      "opportunity_id": "opp-9f3a1b2c",
+      "rule_id": "CER-0066",
+      "title": "Inactive and Detached EBS Volume",
+      "estimated_monthly_savings": 48.00,
+      "currency": "USD",
+      "risk_level": "LOW",
+      "confidence_level": "HIGH",
+      "resource": {
+        "resource_id": "vol-0123456789abcdef0",
+        "resource_type": "aws_ebs_volume",
+        "provider": "aws",
+        "region": "us-east-1"
+      },
+      "remediation_command": "aws ec2 delete-volume --volume-id vol-0123456789abcdef0 --region us-east-1",
+      "recommended_actions": [
+        "Create snapshot and delete detached volume",
+        "Review backup lifecycle policy"
+      ]
+    }
+  ]
+}
+```
+
+</details>
+
+---
+
 ## 🏗️ Estrutura de Arquitetura
 
 ```text
@@ -167,6 +238,17 @@ pytest -v
    - Crie o pacote `providers/azure/` ou `providers/gcp/`.
    - Implemente as interfaces `BaseResourceCollector`, `BaseMetricsProvider` e `BasePricingProvider`.
    - Crie e registre as regras específicas do provedor.
+
+---
+
+## 📌 Versionamento e Changelog
+
+Este projeto adere ao [Semantic Versioning (SemVer)](https://semver.org/lang/pt-BR/). Todas as alterações e notas de lançamento são documentadas no arquivo [CHANGELOG.md](CHANGELOG.md).
+
+Para instalar uma versão específica:
+```bash
+pip install git+https://github.com/paulorosa/cloud-resource-inefficiency.git@v0.1.0
+```
 
 ---
 
