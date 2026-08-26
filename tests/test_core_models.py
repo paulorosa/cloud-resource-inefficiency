@@ -124,8 +124,8 @@ class TestCoreModels(unittest.TestCase):
         md_out = ScanResultFormatter.to_markdown(result)
 
         # Ensure pipes are escaped and HTML is sanitized
-        self.assertIn(r"app\|database &lt;script>alert(1)</script&gt;", md_out)
-        self.assertIn(r"Action with \| pipe and &lt;tags>", md_out)
+        self.assertIn(r"app\|database &lt;script&gt;alert(1)&lt;/script&gt;", md_out)
+        self.assertIn(r"Action with \| pipe and &lt;tags&gt;", md_out)
         self.assertNotIn("<script>", md_out)
 
     def test_registry_operations(self):
