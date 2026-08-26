@@ -1,4 +1,4 @@
-"""Enums for cloud providers, resource types, risk and confidence levels."""
+﻿"""Enums for cloud providers, resource types, risk and confidence levels."""
 
 from enum import Enum
 
@@ -28,6 +28,7 @@ class ResourceType(str, Enum):
     GCP_PERSISTENT_DISK = "gcp_persistent_disk"
     GCP_COMPUTE_INSTANCE = "gcp_compute_instance"
     GCP_STATIC_IP = "gcp_static_ip"
+    GCP_GCS_BUCKET = "gcp_gcs_bucket"
 
 
 class InefficiencyCategory(str, Enum):

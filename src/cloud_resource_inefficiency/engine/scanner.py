@@ -1,4 +1,4 @@
-"""Orchestration engine for scanning cloud environments and evaluating inefficiency rules."""
+﻿"""Orchestration engine for scanning cloud environments and evaluating inefficiency rules."""
 
 from datetime import datetime, timezone
 import logging
@@ -8,6 +8,7 @@ from cloud_resource_inefficiency.core.enums import CloudProvider, ResourceType
 from cloud_resource_inefficiency.core.models import Opportunity, ScanResult
 from cloud_resource_inefficiency.core.registry import InefficiencyRegistry, default_registry
 from cloud_resource_inefficiency.providers.aws import register_aws_provider
+from cloud_resource_inefficiency.providers.gcp import register_gcp_provider
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,11 @@ class InefficiencyScanner:
                 # Ensure AWS default components are registered if not already present
                 if not self.registry.get_rules_for_provider(CloudProvider.AWS):
                     register_aws_provider(registry=self.registry)
+            
+            if CloudProvider.GCP in self.providers:
+                # Ensure GCP default components are registered if not already present
+                if not self.registry.get_rules_for_provider(CloudProvider.GCP):
+                    register_gcp_provider(registry=self.registry)
 
     def scan(
         self,
