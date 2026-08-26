@@ -17,7 +17,6 @@ from cloud_resource_inefficiency.core.models import (
 from cloud_resource_inefficiency.core.registry import InefficiencyRegistry
 from cloud_resource_inefficiency.formatters.output import ScanResultFormatter
 
-
 class TestCoreModels(unittest.TestCase):
 
     def test_cloud_resource_model_and_tag_lookup(self):
@@ -43,7 +42,7 @@ class TestCoreModels(unittest.TestCase):
             region="us-east-1",
         )
         opp = Opportunity(
-            rule_id="CER-0066",
+            rule_id="AWS-EBS-001",
             title="Inactive and Detached EBS Volume",
             description="EBS volume is detached and inactive.",
             category=InefficiencyCategory.UNATTACHED_STORAGE,
@@ -57,7 +56,7 @@ class TestCoreModels(unittest.TestCase):
         )
 
         d = opp.to_dict()
-        self.assertEqual(d["rule_id"], "CER-0066")
+        self.assertEqual(d["rule_id"], "AWS-EBS-001")
         self.assertEqual(d["estimated_monthly_savings"], 25.50)
         self.assertEqual(d["resource"]["resource_id"], "vol-12345")
         self.assertEqual(d["confidence_level"], "HIGH")
@@ -72,7 +71,7 @@ class TestCoreModels(unittest.TestCase):
             region="us-east-1",
         )
         opp1 = Opportunity(
-            rule_id="CER-0066",
+            rule_id="AWS-EBS-001",
             title="Test 1",
             description="Desc",
             category=InefficiencyCategory.UNATTACHED_STORAGE,
@@ -80,7 +79,7 @@ class TestCoreModels(unittest.TestCase):
             estimated_monthly_savings=10.0,
         )
         opp2 = Opportunity(
-            rule_id="CER-0066",
+            rule_id="AWS-EBS-001",
             title="Test 2",
             description="Desc",
             category=InefficiencyCategory.UNATTACHED_STORAGE,
@@ -113,7 +112,7 @@ class TestCoreModels(unittest.TestCase):
             region="us-east-1",
         )
         opp = Opportunity(
-            rule_id="CER-0066",
+            rule_id="AWS-EBS-001",
             title="Test",
             description="Desc",
             category=InefficiencyCategory.UNATTACHED_STORAGE,
@@ -132,7 +131,6 @@ class TestCoreModels(unittest.TestCase):
     def test_registry_operations(self):
         registry = InefficiencyRegistry()
         self.assertEqual(len(registry.get_all_rules()), 0)
-
 
 if __name__ == "__main__":
     unittest.main()
