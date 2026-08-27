@@ -164,6 +164,27 @@ for opp in result.opportunities:
     print(f"  Risco: {opp.risk_level.value} | Confiança: {opp.confidence_level.value}")
 ```
 
+#### Resultado de Execução
+
+```text
+======================================================================
+               CLOUD FINANCIAL INEFFICIENCY SCAN REPORT
+======================================================================
+Total Scanned Resources: 1
+Opportunities Found:     1
+Total Monthly Savings:   $0.50 USD
+Annual Projected Saving: $6.00 USD
+----------------------------------------------------------------------
+Rule ID    | Resource ID            | Region       | Savings/Mo   | Risk
+----------------------------------------------------------------------
+GCP-GCS-001 | teste-bucket-gcp-...   | US-EAST1     | $     0.50 | VERY_LOW
+======================================================================
+Oportunidade [GCP-GCS-001]: Inactive GCS Bucket
+  Bucket: teste-bucket-gcp-paulo-rosa
+  Economia Estimada: $0.50 USD/mês
+  Risco: VERY_LOW | Confiança: HIGH
+```
+
 ### Exemplo Multi-Provedor:
 
 ```python

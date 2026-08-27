@@ -7,7 +7,6 @@ from cloud_resource_inefficiency.core.enums import CloudProvider, ResourceType
 from cloud_resource_inefficiency.core.interfaces import BasePricingProvider
 from cloud_resource_inefficiency.core.models import CloudResource, PricingDetails
 
-
 DEFAULT_STORAGE_RATES = {
     "standard": 0.020,
     "nearline": 0.010,
@@ -15,6 +14,7 @@ DEFAULT_STORAGE_RATES = {
     "archive": 0.0036,
 }
 
+EMPTY_BUCKET_MONTHLY_COST = 0.50
 
 class GCPPricingProvider(BasePricingProvider):
     """Calculates resource pricing for GCP GCS buckets."""
@@ -35,28 +35,49 @@ class GCPPricingProvider(BasePricingProvider):
                 currency="USD",
                 rate_source="unsupported_resource_type",
             )
-        
+
         return self._calculate_gcs_pricing(resource)
 
     def _calculate_gcs_pricing(self, resource: CloudResource) -> PricingDetails:
-        """Calculates monthly pricing for a GCS bucket."""
+        """Calculates monthly pricing for a GCS bucket.
+
+        For empty buckets, applies a minimum metadata cost.
+        For non-empty buckets, calculates based on storage class and size.
+        """
         raw_meta = resource.raw_metadata or {}
         storage_class = str(raw_meta.get("storage_class", "standard")).lower()
         size_bytes = float(raw_meta.get("size_bytes", 0.0))
+
+        # For empty buckets, apply minimum cost (metadata overhead)
+        if size_bytes == 0:
+            cost_breakdown = {
+                "storage_cost": 0.0,
+                "metadata_overhead": EMPTY_BUCKET_MONTHLY_COST,
+                "size_gb": 0.0,
+            }
+
+            return PricingDetails(
+                monthly_cost=round(EMPTY_BUCKET_MONTHLY_COST, 4),
+                currency="USD",
+                rate_source="gcs_empty_bucket_metadata",
+                unit_rates={"empty_bucket_monthly": EMPTY_BUCKET_MONTHLY_COST},
+                cost_breakdown=cost_breakdown,
+            )
+
+        # For non-empty buckets, calculate based on size and storage class
         size_gb = size_bytes / (1024 ** 3)
-        
         rate_per_gb = DEFAULT_STORAGE_RATES.get(storage_class, DEFAULT_STORAGE_RATES["standard"])
         storage_cost = size_gb * rate_per_gb
-        
+
         cost_breakdown = {
             "storage_cost": round(storage_cost, 4),
             "size_gb": round(size_gb, 4),
         }
-        
+
         unit_rates = {
             f"{storage_class}_per_gb_month": rate_per_gb,
         }
-        
+
         return PricingDetails(
             monthly_cost=round(storage_cost, 4),
             currency="USD",
