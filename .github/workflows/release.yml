@@ -14,22 +14,6 @@ on:
 permissions:
   contents: write
 
-name: Release
-
-on:
-  workflow_dispatch:
-    inputs:
-      tag_name:
-        description: 'Tag da release (ex: v0.2.1). Em push de tag, o valor é detectado automaticamente.'
-        required: false
-        default: ''
-  push:
-    tags:
-      - "v*.*.*"
-
-permissions:
-  contents: write
-
 jobs:
   test:
     name: Run Tests on Python 3.11
