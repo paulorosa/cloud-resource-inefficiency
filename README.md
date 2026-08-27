@@ -180,7 +180,7 @@ Rule ID    | Resource ID            | Region       | Savings/Mo   | Risk
 GCP-GCS-001 | teste-bucket-gcp-...   | US-EAST1     | $     0.50 | VERY_LOW
 ======================================================================
 Oportunidade [GCP-GCS-001]: Inactive GCS Bucket
-  Bucket: teste-bucket-gcp
+  Bucket: teste-bucket-gcp-paulo-rosa
   Economia Estimada: $0.50 USD/mês
   Risco: VERY_LOW | Confiança: HIGH
 ```
