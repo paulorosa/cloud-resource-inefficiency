@@ -7,6 +7,21 @@ e este projeto adere ao [Semantic Versioning (SemVer)](https://semver.org/lang/p
 
 ---
 
+## [Unreleased]
+### Added
+- **Provedor Azure**: Suporte a Azure Managed Disks com auto-registro no `InefficiencyScanner`.
+- **Detector de Managed Disks inativos e desacoplados**: Implementação da regra `InactiveDetachedManagedDiskRule` (`AZURE-MANAGED-DISK-001`) para identificar discos sem VM associada e sem operações recentes de leitura ou escrita.
+- **Coletor Azure Managed Disk**: Descoberta de discos, localização, SKU, tamanho, IOPS, throughput, tags, snapshot e vínculo com VM.
+- **Provedor de Métricas Azure**: `AzureMonitorMetricsProvider` para consultar operações de leitura e escrita em uma janela configurável (padrão: 14 dias).
+- **Provedor de Precificação Azure**: `AzurePricingProvider` com tarifas padrão por SKU e cálculo baseado no tamanho provisionado.
+- **Client Factory Azure**: `AzureClientFactory` com criação lazy e cache de clientes Compute e Monitor usando `DefaultAzureCredential`.
+- **Testes Azure**: Cobertura unitária para coleta, registro, pricing e detecção de discos anexados, ativos e inativos.
+### Changed
+- **Dependências**: Adicionadas dependências opcionais `azure-identity`, `azure-mgmt-compute` e `azure-mgmt-monitor` no extra `azure`.
+- **Documentação**: README atualizado com a oportunidade Azure, instalação, exemplo de uso e guia de extensão.
+
+---
+
 ## [0.2.1] - 2026-08-26
 ### Added
 - Novas regras de ineficiência planejadas (ex: Elastic IPs órfãos, volumes não criptografados, Persistent Disks inativos, etc.).

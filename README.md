@@ -47,6 +47,22 @@ Desenvolvida seguindo os princípios **SOLID**, padrões de projeto Orientados a
   - Nível de confiança (`HIGH` ou `MEDIUM`).
   - Ações recomendadas e comando CLI para remediação (`gsutil -m rm -r gs://bucket-name`).
 
+### 3. Inactive and Detached Managed Disk (AZURE-MANAGED-DISK-001)
+- **Provedor**: Azure
+- **Recurso**: Azure Managed Disk (`azure_managed_disk`)
+- **Categoria**: `Unattached Storage`
+- **Critérios de Detecção**:
+  - Disco em estado `unattached`, sem VM associada.
+  - Análise das métricas do **Azure Monitor** (`Disk Read Operations/Sec` e `Disk Write Operations/Sec`) em uma janela configurável (padrão: 14 dias).
+  - Inativo quando a soma das operações de leitura e escrita não excede o limite configurado (padrão: zero operações).
+- **Fontes de Precificação**:
+  - Tabela local de tarifas padrão por SKU (`Premium`, `Standard SSD`, `Standard HDD`, `Ultra`), baseada no tamanho provisionado em GiB.
+- **Retorno da Oportunidade**:
+  - Economia mensal estimada ($ USD / mês).
+  - Nível de risco e confiança ajustados quando são encontradas tags de retenção, backup, recuperação ou migração.
+  - Recomendação para criar snapshot quando nenhum snapshot é informado.
+  - Ações recomendadas e comando CLI para remediação (`az disk delete --ids ... --yes`).
+
 ---
 
 ## 📦 Como Usar em Outros Projetos (`requirements.txt`)
@@ -67,6 +83,12 @@ git+ssh://git@github.com/paulorosa/cloud-resource-inefficiency.git
 
 # Opção D: Desenvolvimento local em modo editável (mesma máquina)
 -e ../cloud-resource-inefficiency
+```
+
+Para habilitar a integração Azure, instale também o extra correspondente:
+
+```bash
+pip install "cloud-resource-inefficiency[azure]"
 ```
 
 ### 2. No terminal do projeto consumidor:
@@ -162,6 +184,35 @@ for opp in result.opportunities:
     print(f"  Bucket: {opp.resource.resource_id}")
     print(f"  Economia Estimada: ${opp.estimated_monthly_savings:.2f} USD/mês")
     print(f"  Risco: {opp.risk_level.value} | Confiança: {opp.confidence_level.value}")
+```
+
+### Exemplo em Python - Azure:
+
+```python
+from cloud_resource_inefficiency import (
+  CloudProvider,
+  InefficiencyScanner,
+  ResourceType,
+  ScanResultFormatter,
+)
+
+# Requer Azure DefaultAzureCredential e uma assinatura configurada.
+scanner = InefficiencyScanner(
+  providers=[CloudProvider.AZURE],
+  regions=["eastus"],
+)
+
+result = scanner.scan(
+  resource_types=[ResourceType.AZURE_MANAGED_DISK],
+  lookback_days=14,
+)
+
+print(ScanResultFormatter.to_text_summary(result))
+for opp in result.opportunities:
+  print(f"Oportunidade [{opp.rule_id}]: {opp.title}")
+  print(f"  Disco: {opp.resource.resource_id}")
+  print(f"  Economia Estimada: ${opp.estimated_monthly_savings:.2f} USD/mês")
+  print(f"  Comando de Remediação: {opp.remediation_command}")
 ```
 
 #### Resultado de Execução
@@ -359,8 +410,14 @@ pytest -v
 - Crie a regra `InactivePersistentDiskRule` herdando de `BaseInefficiencyRule`.
 - Registre no `default_registry` em `providers/gcp/__init__.py`.
 
-### 3. Novo Provedor Cloud (Ex: Azure)
-- Crie o pacote `providers/azure/`.
+### 3. Recurso Azure Managed Disk
+- Instale as dependências opcionais com `pip install "cloud-resource-inefficiency[azure]"`.
+- Configure a autenticação Azure via `DefaultAzureCredential` e defina a assinatura usada pelo `AzureClientFactory`.
+- Use `CloudProvider.AZURE` e `ResourceType.AZURE_MANAGED_DISK` no `InefficiencyScanner`.
+- A regra `AZURE-MANAGED-DISK-001` é registrada automaticamente quando o scanner inclui o provedor Azure.
+
+### 4. Novo Provedor Cloud
+- Crie o pacote `providers/<provedor>/`.
 - Implemente as interfaces `BaseResourceCollector`, `BaseMetricsProvider` e `BasePricingProvider`.
 - Crie e registre as regras específicas do provedor.
 
