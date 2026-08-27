@@ -27,11 +27,12 @@ class GCSCollector(BaseResourceCollector):
 
     def collect(self, region: str, **kwargs: Any) -> List[CloudResource]:
         """Collects GCS buckets in the GCP project."""
-        storage_client = self._client_factory.get_storage_client()
-        resources: List[CloudResource] = []
-
+        
         try:
-            buckets = storage_client.list_buckets()
+            storage_client = self._client_factory.get_storage_client()
+            resources: List[CloudResource] = []
+            
+            buckets = list(storage_client.list_buckets())
             
             for bucket in buckets:
                 bucket_name = bucket.name
@@ -52,7 +53,7 @@ class GCSCollector(BaseResourceCollector):
                     "size_bytes": total_size_bytes,
                     "size_gib": round(total_size_bytes / (1024 ** 3), 4),
                     "versioning_enabled": bucket_reload.versioning_enabled or False,
-                    "lifecycle_rules": len(bucket_reload.lifecycle_rules or []),
+                    "lifecycle_rules": sum(1 for _ in (bucket_reload.lifecycle_rules or ())),
                 }
                 
                 resource = CloudResource(
