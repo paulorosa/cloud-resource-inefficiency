@@ -368,7 +368,16 @@ pytest -v
 
 ## 📌 Versionamento e Changelog
 
-Este projeto adere ao [Semantic Versioning (SemVer)](https://semver.org/lang/pt-BR/). Todas as alterações e notas de lançamento são documentadas no arquivo [CHANGELOG.md](CHANGELOG.md).
+Este projeto adere ao [Semantic Versioning (SemVer)](https://semver.org/lang/pt-BR/). A versão do pacote é gerada automaticamente a partir de tags Git pelo `setuptools-scm`; não é necessário editar `__init__.py` ou `pyproject.toml` para cada release. As alterações e notas de lançamento continuam documentadas no arquivo [CHANGELOG.md](CHANGELOG.md).
+
+Para publicar uma nova versão, atualize o `CHANGELOG.md`, faça commit das alterações e crie uma tag SemVer com o prefixo `v`:
+
+```bash
+git tag v0.2.2
+git push origin HEAD --tags
+```
+
+O workflow de release será executado ao receber a tag, construirá o pacote com essa versão e criará a release no GitHub. Para desenvolvimento entre releases, o `setuptools-scm` gera uma versão `.dev` automaticamente a partir da tag mais recente e dos commits posteriores.
 
 Para instalar uma versão específica:
 ```bash
