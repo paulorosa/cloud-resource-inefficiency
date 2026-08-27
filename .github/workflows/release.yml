@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Tag da release (ex: v0.1.0). Se vazio, usará a versão de src/cloud_resource_inefficiency/__init__.py'
+        description: 'Tag da release (ex: v0.2.1). Em push de tag, o valor é detectado automaticamente.'
         required: false
         default: ''
   push:
@@ -66,8 +66,8 @@ jobs:
           elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
           else
-            VERSION=$(python -c "import cloud_resource_inefficiency; print(cloud_resource_inefficiency.__version__)")
-            TAG="v${VERSION}"
+            echo "Informe inputs.tag_name ao executar o workflow manualmente fora de uma tag."
+            exit 1
           fi
           echo "Determined release tag: $TAG"
           echo "tag_name=${TAG}" >> $GITHUB_OUTPUT
