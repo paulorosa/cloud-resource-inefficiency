@@ -7,9 +7,11 @@ e este projeto adere ao [Semantic Versioning (SemVer)](https://semver.org/lang/p
 
 ---
 
-## [Unreleased]
+## [0.2.1] - 2026-08-26
 ### Added
 - Novas regras de ineficiência planejadas (ex: Elastic IPs órfãos, volumes não criptografados, Persistent Disks inativos, etc.).
+### Changed
+- **Documentação GCP**: Adicionado ao README um resultado real de execução do `ResourceType.GCP_GCS_BUCKET`, com a detecção `GCP-GCS-001` e economia mensal estimada de $0.50 USD.
 
 ---
 
