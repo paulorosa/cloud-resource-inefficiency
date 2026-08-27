@@ -37,6 +37,14 @@ from .providers.aws import (
     InactiveDetachedEBSVolumeRule,
     register_aws_provider,
 )
+from .providers.azure import (
+    AzureClientFactory,
+    AzureManagedDiskCollector,
+    AzureMonitorMetricsProvider,
+    AzurePricingProvider,
+    InactiveDetachedManagedDiskRule,
+    register_azure_provider,
+)
 
 try:
     from importlib.metadata import version
@@ -75,4 +83,11 @@ __all__ = [
     "AWSPricingProvider",
     "InactiveDetachedEBSVolumeRule",
     "register_aws_provider",
+    # Azure Provider
+    "AzureClientFactory",
+    "AzureManagedDiskCollector",
+    "AzureMonitorMetricsProvider",
+    "AzurePricingProvider",
+    "InactiveDetachedManagedDiskRule",
+    "register_azure_provider",
 ]

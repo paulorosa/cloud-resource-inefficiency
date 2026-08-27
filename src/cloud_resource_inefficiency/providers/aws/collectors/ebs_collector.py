@@ -1,12 +1,16 @@
 """Collector for AWS Elastic Block Store (EBS) volumes."""
 
+import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from cloud_resource_inefficiency.core.enums import CloudProvider, ResourceType
 from cloud_resource_inefficiency.core.interfaces import BaseResourceCollector
 from cloud_resource_inefficiency.core.models import CloudResource
+from cloud_resource_inefficiency.core.resilience import retry
 from cloud_resource_inefficiency.providers.aws.client_factory import AWSClientFactory
+
+logger = logging.getLogger(__name__)
 
 
 class AWSEBSCollector(BaseResourceCollector):
@@ -23,8 +27,10 @@ class AWSEBSCollector(BaseResourceCollector):
     def resource_type(self) -> ResourceType:
         return ResourceType.AWS_EBS_VOLUME
 
+    @retry(max_attempts=3, base_delay=1.0, backoff_factor=2.0)
     def collect(self, region: str, **kwargs: Any) -> List[CloudResource]:
-        """Collects EBS volumes in the specified AWS region."""
+        """Collects EBS volumes in the specified AWS region with retry logic."""
+        logger.debug("Starting EBS volume collection in region: %s", region)
         ec2_client = self._client_factory.get_client("ec2", region_name=region)
         paginator = ec2_client.get_paginator("describe_volumes")
 
@@ -78,8 +84,11 @@ class AWSEBSCollector(BaseResourceCollector):
                         raw_metadata=raw_meta,
                     )
                     resources.append(resource)
+                    logger.debug("Discovered EBS volume: %s (status=%s, size=%s GiB)", volume_id, status, raw_meta.get("size_gib"))
+
+            logger.info("Successfully collected %d EBS volumes in region %s", len(resources), region)
         except Exception as e:
-            # Let caller handle or log regional failures
+            logger.error("Error collecting EBS volumes in region %s: %s", region, str(e), exc_info=True)
             raise RuntimeError(f"Error collecting EBS volumes in region {region}: {e}") from e
 
         return resources

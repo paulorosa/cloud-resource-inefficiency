@@ -1,0 +1,210 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Extract AWS-EBS-001 rule details and create `docs/providers/aws/README.md`": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866856336
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866864586
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867101756
+      }
+    ],
+    "2.1 Extract GCP-GCS-001 rule details and create `docs/providers/gcp/README.md`": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866856482
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866864897
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867102031
+      }
+    ],
+    "3.1 Extract Azure Managed Disk rule details and create `docs/providers/azure/README.md`": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866856542
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866865122
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867102372
+      }
+    ],
+    "4.1 Refactor `README.md` main sections": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866856676
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867108807
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867182756
+      }
+    ],
+    "4.2 Add provider summary table and quick navigation": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866856748
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867109078
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867183479
+      }
+    ],
+    "4.3 Add \"Learn More\" section and footer": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866856809
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867186755
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867187002
+      }
+    ],
+    "4.4 Verify main README line count and content completeness": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866856934
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867193912
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867266766
+      }
+    ],
+    "5.1 Validate all provider documentation files": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866856984
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867194161
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867267149
+      }
+    ],
+    "5.2 Verify cross-document linking": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866857039
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867194664
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867267642
+      }
+    ],
+    "6. Final Checkpoint - Ensure Documentation is Complete": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787866857075
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867271490
+      },
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867370881
+      }
+    ],
+    "1. Create AWS Provider Documentation": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867101807
+      }
+    ],
+    "2. Create GCP Provider Documentation": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867102065
+      }
+    ],
+    "3. Create Azure Provider Documentation": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867102408
+      }
+    ],
+    "4. Refactor Main README to be Concise": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867266822
+      }
+    ],
+    "5. Validation and Cross-Document Linking": [
+      {
+        "executionId": "b18174cc-5c9c-473f-a806-87e5b16ffd14",
+        "chatSessionId": "sess_de88ba41-89a4-4f73-85ac-be3dff3a7251",
+        "timestamp": 1787867267670
+      }
+    ]
+  }
+}

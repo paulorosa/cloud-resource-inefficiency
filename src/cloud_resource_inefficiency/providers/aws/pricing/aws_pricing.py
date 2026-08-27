@@ -73,6 +73,9 @@ class AWSPricingProvider(BasePricingProvider):
         throughput = int(raw_meta.get("throughput", 0) or 0)
         region = resource.region
 
+        logger.debug("Calculating pricing for EBS volume %s (type=%s, size=%s GiB, iops=%s, region=%s)",
+                     resource.resource_id, volume_type, size_gib, iops, region)
+
         # 1. Base storage rate ($/GiB-month)
         storage_rate, rate_source = self._get_ebs_storage_rate(region, volume_type)
         storage_cost = size_gib * storage_rate
@@ -97,6 +100,9 @@ class AWSPricingProvider(BasePricingProvider):
             throughput_cost = extra_throughput * throughput_rate
 
         total_monthly = storage_cost + iops_cost + throughput_cost
+
+        logger.info("EBS pricing calculated for %s: total=$%.2f (storage=$%.2f, iops=$%.2f, throughput=$%.2f) from source: %s",
+                    resource.resource_id, total_monthly, storage_cost, iops_cost, throughput_cost, rate_source)
 
         cost_breakdown = {
             "storage_cost": storage_cost,
@@ -146,8 +152,10 @@ class AWSPricingProvider(BasePricingProvider):
         """Queries the AWS Pricing API in us-east-1 for EBS storage rate."""
         location = REGION_TO_LOCATION.get(region)
         if not location:
+            logger.debug("Region %s not found in location mapping, skipping AWS Pricing API call", region)
             return None
 
+        logger.debug("Fetching EBS storage rate from AWS Pricing API for region=%s, volume_type=%s", region, volume_type)
         pricing_client = self._client_factory.get_client("pricing", region_name="us-east-1")
         
         # Mapping volume type to AWS Pricing volume type name
@@ -169,24 +177,30 @@ class AWSPricingProvider(BasePricingProvider):
             {"Type": "TERM_MATCH", "Field": "volumeApiName", "Value": volume_type},
         ]
 
-        response = pricing_client.get_products(
-            ServiceCode="AmazonEC2",
-            Filters=filters,
-            MaxResults=1,
-        )
+        try:
+            response = pricing_client.get_products(
+                ServiceCode="AmazonEC2",
+                Filters=filters,
+                MaxResults=1,
+            )
 
-        price_list = response.get("PriceList", [])
-        if not price_list:
-            return None
+            price_list = response.get("PriceList", [])
+            if not price_list:
+                logger.debug("No pricing data found from AWS Pricing API for region=%s, volume_type=%s", region, volume_type)
+                return None
 
-        product_data = json.loads(price_list[0]) if isinstance(price_list[0], str) else price_list[0]
-        terms = product_data.get("terms", {}).get("OnDemand", {})
-        for _, term in terms.items():
-            price_dimensions = term.get("priceDimensions", {})
-            for _, dim in price_dimensions.items():
-                price_per_unit = dim.get("pricePerUnit", {}).get("USD")
-                if price_per_unit:
-                    return float(price_per_unit)
+            product_data = json.loads(price_list[0]) if isinstance(price_list[0], str) else price_list[0]
+            terms = product_data.get("terms", {}).get("OnDemand", {})
+            for _, term in terms.items():
+                price_dimensions = term.get("priceDimensions", {})
+                for _, dim in price_dimensions.items():
+                    price_per_unit = dim.get("pricePerUnit", {}).get("USD")
+                    if price_per_unit:
+                        rate = float(price_per_unit)
+                        logger.info("Successfully fetched EBS rate from AWS Pricing API: region=%s, volume_type=%s, rate=$%s", region, volume_type, rate)
+                        return rate
+        except Exception as e:
+            logger.warning("Error fetching from AWS Pricing API: %s", str(e), exc_info=True)
 
         return None
 
