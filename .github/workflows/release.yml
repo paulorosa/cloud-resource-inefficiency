@@ -14,19 +14,35 @@ on:
 permissions:
   contents: write
 
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag da release (ex: v0.2.1). Em push de tag, o valor é detectado automaticamente.'
+        required: false
+        default: ''
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
 jobs:
   test:
-    name: Run Tests on Python 3.13
+    name: Run Tests on Python 3.11
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.13
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -35,7 +51,7 @@ jobs:
 
       - name: Run Test Suite
         run: |
-          python -m unittest discover -s tests -v
+          pytest tests/ -v
 
   build-and-release:
     name: Build & Create GitHub Release

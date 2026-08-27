@@ -1,12 +1,16 @@
 """CloudWatch metrics provider for AWS resources."""
 
+import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
 from cloud_resource_inefficiency.core.enums import CloudProvider
 from cloud_resource_inefficiency.core.interfaces import BaseMetricsProvider
 from cloud_resource_inefficiency.core.models import CloudResource, MetricSummary
+from cloud_resource_inefficiency.core.resilience import retry
 from cloud_resource_inefficiency.providers.aws.client_factory import AWSClientFactory
+
+logger = logging.getLogger(__name__)
 
 
 class AWSCloudWatchMetricsProvider(BaseMetricsProvider):
@@ -19,6 +23,7 @@ class AWSCloudWatchMetricsProvider(BaseMetricsProvider):
     def provider(self) -> CloudProvider:
         return CloudProvider.AWS
 
+    @retry(max_attempts=3, base_delay=1.0, backoff_factor=2.0)
     def get_metric_summary(
         self,
         resource: CloudResource,
@@ -34,6 +39,8 @@ class AWSCloudWatchMetricsProvider(BaseMetricsProvider):
         Query CloudWatch for metric statistics and return an aggregated summary.
         """
         region = resource.region
+        logger.debug("Querying CloudWatch metric %s for resource %s in region %s", metric_name, resource.resource_id, region)
+        
         cw_client = self._client_factory.get_client("cloudwatch", region_name=region)
 
         # Default namespace for EBS
@@ -67,6 +74,7 @@ class AWSCloudWatchMetricsProvider(BaseMetricsProvider):
             unit = datapoints[0].get("Unit", "None") if datapoints else "Count"
 
             if not datapoints:
+                logger.warning("No CloudWatch data points found for metric %s on resource %s", metric_name, resource.resource_id)
                 return MetricSummary(
                     metric_name=metric_name,
                     unit=unit,
@@ -86,6 +94,9 @@ class AWSCloudWatchMetricsProvider(BaseMetricsProvider):
                 else 0.0
             )
 
+            logger.info("Retrieved CloudWatch metric %s for resource %s: total=%s, avg=%s, max=%s, datapoints=%d",
+                        metric_name, resource.resource_id, total_val, avg_val, max_val, len(datapoints))
+
             return MetricSummary(
                 metric_name=metric_name,
                 unit=unit,
@@ -98,13 +109,5 @@ class AWSCloudWatchMetricsProvider(BaseMetricsProvider):
             )
 
         except Exception as e:
-            return MetricSummary(
-                metric_name=metric_name,
-                unit="None",
-                period_days=period_days,
-                total_value=0.0,
-                average_value=0.0,
-                maximum_value=0.0,
-                datapoint_count=0,
-                additional_info={"status": "ERROR", "error_message": str(e)},
-            )
+            logger.error("Error querying CloudWatch metric %s for resource %s: %s", metric_name, resource.resource_id, str(e), exc_info=True)
+            raise

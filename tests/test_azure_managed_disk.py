@@ -5,6 +5,8 @@ from types import SimpleNamespace
 from unittest import TestCase
 from unittest.mock import MagicMock
 
+import pytest
+
 from cloud_resource_inefficiency.core.enums import (
     CloudProvider,
     ConfidenceLevel,
@@ -99,6 +101,76 @@ class TestAzureManagedDisk(TestCase):
         self.assertIsNotNone(registry.get_metrics_provider(CloudProvider.AZURE))
         self.assertIsNotNone(registry.get_pricing_provider(CloudProvider.AZURE))
         self.assertEqual(len(registry.get_rules_for_provider(CloudProvider.AZURE)), 1)
+
+
+@pytest.mark.parametrize("size_gib,expected_savings", [
+    (32, 4.32),
+    (128, 17.28),
+    (256, 34.56),
+    (512, 69.12),
+    (1024, 138.24),
+])
+def test_azure_disk_pricing_by_size(size_gib: int, expected_savings: float):
+    """Test Azure managed disk pricing scales correctly with size."""
+    resource = CloudResource(
+        resource_id="/subscriptions/123/resourceGroups/rg/providers/Microsoft.Compute/disks/disk-test",
+        name="disk-test",
+        provider=CloudProvider.AZURE,
+        resource_type=ResourceType.AZURE_MANAGED_DISK,
+        region="eastus",
+        tags={},
+        created_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+        status="unattached",
+        raw_metadata={"size_gib": size_gib, "sku": "Premium_LRS", "is_attached": False},
+    )
+
+    metrics = MagicMock()
+    metrics.get_metric_summary.return_value = MetricSummary(
+        metric_name="disk", unit="Count", period_days=14, total_value=0,
+        average_value=0, maximum_value=0, datapoint_count=0,
+    )
+
+    rule = InactiveDetachedManagedDiskRule()
+    opportunity = rule.evaluate(resource, metrics, AzurePricingProvider())
+
+    assert opportunity is not None
+    assert opportunity.estimated_monthly_savings == expected_savings
+
+
+@pytest.mark.parametrize("sku,has_opportunity", [
+    ("Premium_LRS", True),
+    ("Premium_ZRS", True),
+    ("StandardSSD_LRS", True),
+    ("StandardSSD_ZRS", True),
+    ("Standard_LRS", True),
+])
+def test_azure_rule_detects_opportunity_for_all_skus(sku: str, has_opportunity: bool):
+    """Test that the rule detects inefficiency for all Azure managed disk SKUs."""
+    resource = CloudResource(
+        resource_id="/subscriptions/123/resourceGroups/rg/providers/Microsoft.Compute/disks/disk-sku-test",
+        name="disk-sku-test",
+        provider=CloudProvider.AZURE,
+        resource_type=ResourceType.AZURE_MANAGED_DISK,
+        region="eastus",
+        tags={},
+        created_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+        status="unattached",
+        raw_metadata={"size_gib": 128, "sku": sku, "is_attached": False},
+    )
+
+    metrics = MagicMock()
+    metrics.get_metric_summary.return_value = MetricSummary(
+        metric_name="disk", unit="Count", period_days=14, total_value=0,
+        average_value=0, maximum_value=0, datapoint_count=0,
+    )
+
+    rule = InactiveDetachedManagedDiskRule()
+    opportunity = rule.evaluate(resource, metrics, AzurePricingProvider())
+
+    if has_opportunity:
+        assert opportunity is not None
+    else:
+        assert opportunity is None
 
 
 if __name__ == "__main__":
