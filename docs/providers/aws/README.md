@@ -92,8 +92,8 @@ print(json.dumps(json_data, indent=2))
 ======================================================================
 Total Scanned Resources: 25
 Opportunities Found:     3
-Total Monthly Savings:   .40 USD
-Annual Projected Saving: ,228.80 USD
+Total Monthly Savings:   102.40 USD
+Annual Projected Saving: 1,228.80 USD
 ----------------------------------------------------------------------
 Rule ID    | Resource ID            | Region       | Savings/Mo   | Risk    
 ----------------------------------------------------------------------
@@ -105,12 +105,12 @@ AWS-EBS-001| vol-1122334455667788aa | eu-west-1    | $    27.20   | HIGH
 
 ## 🧪 Testes
 
-Testes para AWS estão em 	ests/:
-- 	est_aws_collectors.py — Coleta de volumes EBS
-- 	est_aws_metrics.py — Métricas CloudWatch
-- 	est_aws_pricing.py — Precificação
-- 	est_aws_rules.py — Lógica de detecção
-- 	est_core_models.py — Modelos genéricos
+Testes para AWS estão em 	tests/:
+- 	test_aws_collectors.py — Coleta de volumes EBS
+- 	test_aws_metrics.py — Métricas CloudWatch
+- 	test_aws_pricing.py — Precificação
+- 	test_aws_rules.py — Lógica de detecção
+- 	test_core_models.py — Modelos genéricos
 
 Execute com:
 `ash
