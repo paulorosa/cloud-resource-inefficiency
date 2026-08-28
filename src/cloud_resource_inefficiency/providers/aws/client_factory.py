@@ -12,12 +12,14 @@ class AWSClientFactory:
     def __init__(
         self,
         session: Optional[boto3.Session] = None,
+        region: Optional[str] = None,
         profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,
         aws_session_token: Optional[str] = None,
         botocore_config: Optional[Config] = None,
     ) -> None:
+        self.region = region
         if session is not None:
             self._session = session
         elif profile_name:
@@ -41,6 +43,7 @@ class AWSClientFactory:
 
     def get_client(self, service_name: str, region_name: Optional[str] = None) -> Any:
         """Returns a cached or new boto3 client for the given service and region."""
+        region_name = region_name or self.region
         cache_key = f"{service_name}:{region_name or 'default'}"
         with self._lock:
             if cache_key not in self._client_cache:
@@ -49,6 +52,14 @@ class AWSClientFactory:
                     kwargs["region_name"] = region_name
                 self._client_cache[cache_key] = self._session.client(service_name, **kwargs)
             return self._client_cache[cache_key]
+
+    def get_ec2_client(self) -> Any:
+        """Return the EC2 client for the factory's configured region."""
+        return self.get_client("ec2")
+
+    def get_cloudwatch_client(self) -> Any:
+        """Return the CloudWatch client for the factory's configured region."""
+        return self.get_client("cloudwatch")
 
     def __repr__(self) -> str:
         return f"<AWSClientFactory session={id(self._session)} cached_clients={len(self._client_cache)}>"

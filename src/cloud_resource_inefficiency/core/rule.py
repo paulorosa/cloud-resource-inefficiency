@@ -1,7 +1,7 @@
 """Base abstract class for financial inefficiency rules."""
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Any, Optional
 
 from .enums import CloudProvider, InefficiencyCategory, ResourceType
 from .interfaces import BaseMetricsProvider, BasePricingProvider
@@ -53,7 +53,7 @@ class BaseInefficiencyRule(ABC):
         resource: CloudResource,
         metrics_provider: BaseMetricsProvider,
         pricing_provider: BasePricingProvider,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[Opportunity]:
         """
         Evaluate a single resource against this inefficiency rule.

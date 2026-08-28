@@ -8,6 +8,14 @@ from .aws import (
     InactiveDetachedEBSVolumeRule,
     register_aws_provider,
 )
+from .azure import (
+    AzureClientFactory,
+    AzureManagedDiskCollector,
+    AzureMonitorMetricsProvider,
+    AzurePricingProvider,
+    InactiveDetachedManagedDiskRule,
+    register_azure_provider,
+)
 
 __all__ = [
     "AWSClientFactory",
@@ -16,4 +24,10 @@ __all__ = [
     "AWSPricingProvider",
     "InactiveDetachedEBSVolumeRule",
     "register_aws_provider",
+    "AzureClientFactory",
+    "AzureManagedDiskCollector",
+    "AzureMonitorMetricsProvider",
+    "AzurePricingProvider",
+    "InactiveDetachedManagedDiskRule",
+    "register_azure_provider",
 ]

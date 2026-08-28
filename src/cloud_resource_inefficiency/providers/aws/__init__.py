@@ -7,11 +7,12 @@ from cloud_resource_inefficiency.providers.aws.collectors.ebs_collector import A
 from cloud_resource_inefficiency.providers.aws.metrics.cloudwatch import AWSCloudWatchMetricsProvider
 from cloud_resource_inefficiency.providers.aws.pricing.aws_pricing import AWSPricingProvider
 from cloud_resource_inefficiency.providers.aws.rules.ebs_inactive_detached import InactiveDetachedEBSVolumeRule
+from typing import Optional
 
 
 def register_aws_provider(
     registry: InefficiencyRegistry = default_registry,
-    client_factory: AWSClientFactory = None,
+    client_factory: Optional[AWSClientFactory] = None,
     use_remote_pricing_api: bool = True,
 ) -> None:
     """Registers all default AWS collectors, metrics, pricing providers, and rules."""
