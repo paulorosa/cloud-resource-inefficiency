@@ -3,6 +3,16 @@
 import threading
 from typing import Any, Dict, Optional
 
+try:
+    from azure.mgmt.compute import ComputeManagementClient
+except ImportError:
+    ComputeManagementClient = None  # type: ignore[assignment,misc]
+
+try:
+    from azure.mgmt.monitor import MonitorManagementClient
+except ImportError:
+    MonitorManagementClient = None  # type: ignore[assignment,misc]
+
 
 class AzureClientFactory:
     """Creates Azure clients using DefaultAzureCredential unless supplied."""
@@ -25,8 +35,8 @@ class AzureClientFactory:
             raise ValueError("Azure subscription_id is required")
         with self._lock:
             if "compute" not in self._client_cache:
-                from azure.mgmt.compute import ComputeManagementClient
-
+                if ComputeManagementClient is None:
+                    raise ImportError("azure-mgmt-compute is required")
                 self._client_cache["compute"] = ComputeManagementClient(
                     self._get_credential(), self.subscription_id
                 )
@@ -37,8 +47,8 @@ class AzureClientFactory:
             raise ValueError("Azure subscription_id is required")
         with self._lock:
             if "monitor" not in self._client_cache:
-                from azure.mgmt.monitor import MonitorManagementClient
-
+                if MonitorManagementClient is None:
+                    raise ImportError("azure-mgmt-monitor is required")
                 self._client_cache["monitor"] = MonitorManagementClient(
                     self._get_credential(), self.subscription_id
                 )

@@ -1,6 +1,6 @@
 """Google Cloud Monitoring metrics provider for GCS resources."""
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
 from google.cloud import logging_v2
@@ -25,12 +25,15 @@ class GCPMonitoringMetricsProvider(BaseMetricsProvider):
         self,
         resource: CloudResource,
         metric_name: str,
-        start_time: datetime,
-        end_time: datetime,
+        start_time: Optional[datetime] = None,
+        end_time: Optional[datetime] = None,
         statistic: str = "Sum",
         **kwargs: Any
     ) -> MetricSummary:
         """Query Cloud Logging for bucket access activity."""
+        period_days = max(1, int(kwargs.get("period_days", 30)))
+        end_time = end_time or datetime.now(timezone.utc)
+        start_time = start_time or end_time - timedelta(days=period_days)
         period_days = max(1, (end_time - start_time).days)
         
         try:
