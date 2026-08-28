@@ -1,5 +1,7 @@
 """Azure provider initialization and registration."""
 
+from typing import Optional
+
 from cloud_resource_inefficiency.core.registry import InefficiencyRegistry, default_registry
 from cloud_resource_inefficiency.providers.azure.client_factory import AzureClientFactory
 from cloud_resource_inefficiency.providers.azure.collectors.managed_disk_collector import AzureManagedDiskCollector
@@ -12,7 +14,7 @@ from cloud_resource_inefficiency.providers.azure.rules.managed_disk_inactive_det
 
 def register_azure_provider(
     registry: InefficiencyRegistry = default_registry,
-    client_factory: AzureClientFactory = None,
+    client_factory: Optional[AzureClientFactory] = None,
 ) -> None:
     """Registers Azure Managed Disk components."""
     factory = client_factory or AzureClientFactory()

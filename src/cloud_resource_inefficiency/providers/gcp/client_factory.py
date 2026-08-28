@@ -1,9 +1,9 @@
 ﻿"""Google Cloud Client Factory with dependency injection and caching."""
 
 import threading
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, cast
 
-from google.cloud import storage, monitoring_v3, logging_v2
+from google.cloud import storage, monitoring_v3, logging_v2  # type: ignore[attr-defined]
 
 
 class GCPClientFactory:
@@ -37,7 +37,7 @@ class GCPClientFactory:
                 if self.credentials:
                     kwargs["credentials"] = self.credentials
                 self._client_cache[cache_key] = storage.Client(**kwargs)
-            return self._client_cache[cache_key]
+            return cast(storage.Client, self._client_cache[cache_key])
 
     def get_monitoring_client(self) -> monitoring_v3.MetricServiceClient:
         """Returns a cached or new Monitoring (Metrics) client."""
@@ -48,7 +48,7 @@ class GCPClientFactory:
                 if self.credentials:
                     kwargs["credentials"] = self.credentials
                 self._client_cache[cache_key] = monitoring_v3.MetricServiceClient(**kwargs)
-            return self._client_cache[cache_key]
+            return cast(monitoring_v3.MetricServiceClient, self._client_cache[cache_key])
 
     def get_logging_client(self) -> logging_v2.Client:
         """Returns a cached or new Logging client."""
@@ -60,8 +60,8 @@ class GCPClientFactory:
                     kwargs["project"] = self.project_id
                 if self.credentials:
                     kwargs["credentials"] = self.credentials
-                self._client_cache[cache_key] = logging_v2.Client(**kwargs)
-            return self._client_cache[cache_key]
+                self._client_cache[cache_key] = logging_v2.Client(**kwargs)  # type: ignore[no-untyped-call]
+            return cast(logging_v2.Client, self._client_cache[cache_key])
 
     def __repr__(self) -> str:
         return f"<GCPClientFactory project={self.project_id} cached_clients={len(self._client_cache)}>"

@@ -46,7 +46,7 @@ class GCPMonitoringMetricsProvider(BaseMetricsProvider):
                 f'AND timestamp<="{end_time.isoformat()}"'
             )
             
-            entries = logging_client.list_entries(filter_=filter_str)
+            entries = logging_client.list_entries(filter_=filter_str)  # type: ignore[no-untyped-call]
             entry_count = sum(1 for _ in entries)
             total_operations = entry_count
             

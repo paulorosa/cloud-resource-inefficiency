@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from google.cloud import storage
+from google.cloud import storage  # type: ignore[attr-defined]
 
 from cloud_resource_inefficiency.core.enums import CloudProvider, ResourceType
 from cloud_resource_inefficiency.core.interfaces import BaseResourceCollector
