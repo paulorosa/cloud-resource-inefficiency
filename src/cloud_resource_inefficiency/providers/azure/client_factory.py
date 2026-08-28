@@ -1,17 +1,21 @@
 """Factory for lazily creating Azure management clients."""
 
 import threading
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
-try:
+if TYPE_CHECKING:
     from azure.mgmt.compute import ComputeManagementClient
-except ImportError:
-    ComputeManagementClient = None  # type: ignore[assignment,misc]
-
-try:
     from azure.mgmt.monitor import MonitorManagementClient
-except ImportError:
-    MonitorManagementClient = None  # type: ignore[assignment,misc]
+else:
+    try:
+        from azure.mgmt.compute import ComputeManagementClient
+    except ImportError:
+        ComputeManagementClient = None
+
+    try:
+        from azure.mgmt.monitor import MonitorManagementClient
+    except ImportError:
+        MonitorManagementClient = None
 
 
 class AzureClientFactory:
