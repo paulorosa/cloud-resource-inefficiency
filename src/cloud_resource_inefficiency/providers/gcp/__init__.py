@@ -1,5 +1,7 @@
 ﻿"""GCP Provider initialization and registration."""
 
+from typing import Optional
+
 from cloud_resource_inefficiency.core.enums import CloudProvider, ResourceType
 from cloud_resource_inefficiency.core.registry import InefficiencyRegistry, default_registry
 from cloud_resource_inefficiency.providers.gcp.client_factory import GCPClientFactory
@@ -11,7 +13,7 @@ from cloud_resource_inefficiency.providers.gcp.rules.gcs_inactive_bucket import 
 
 def register_gcp_provider(
     registry: InefficiencyRegistry = default_registry,
-    client_factory: GCPClientFactory = None,
+    client_factory: Optional[GCPClientFactory] = None,
 ) -> None:
     """Registers all default GCP collectors, metrics, pricing providers, and rules."""
     factory = client_factory or GCPClientFactory()

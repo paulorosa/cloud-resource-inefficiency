@@ -12,12 +12,18 @@ class ScanResultFormatter:
     @staticmethod
     def to_json(result: ScanResult, indent: int = 2) -> str:
         """Format ScanResult into a pretty JSON string."""
-        return json.dumps(result.to_dict(), indent=indent, default=str)
+        return json.dumps(ScanResultFormatter.to_dict(result), indent=indent, default=str)
 
     @staticmethod
     def to_dict(result: ScanResult) -> Dict[str, Any]:
         """Convert ScanResult into a dictionary."""
-        return result.to_dict()
+        data = result.to_dict()
+        data.update({
+            "scanned_resources_count": result.scanned_resources_count,
+            "opportunities_count": result.opportunities_count,
+            "total_estimated_monthly_savings": result.total_estimated_monthly_savings,
+        })
+        return data
 
     @staticmethod
     def to_text_summary(result: ScanResult) -> str:
@@ -27,7 +33,7 @@ class ScanResultFormatter:
             "               CLOUD FINANCIAL INEFFICIENCY SCAN REPORT",
             "=" * 70,
             f"Total Scanned Resources: {result.scanned_resources_count}",
-            f"Opportunities Found:     {result.opportunities_count}",
+            f"Opportunities Found: {result.opportunities_count}",
             f"Total Monthly Savings:   ${result.total_estimated_monthly_savings:,.2f} USD",
             f"Annual Projected Saving: ${result.total_estimated_monthly_savings * 12:,.2f} USD",
             "-" * 70,

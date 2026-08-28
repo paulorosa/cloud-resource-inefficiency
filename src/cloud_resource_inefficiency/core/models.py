@@ -78,11 +78,11 @@ class PricingDetails:
 class Opportunity:
     """Represents an identified financial efficiency opportunity."""
     rule_id: str
-    title: str
-    description: str
     category: InefficiencyCategory
     resource: CloudResource
     estimated_monthly_savings: float
+    title: str = ""
+    description: str = ""
     currency: str = "USD"
     confidence_level: ConfidenceLevel = ConfidenceLevel.HIGH
     risk_level: RiskLevel = RiskLevel.LOW

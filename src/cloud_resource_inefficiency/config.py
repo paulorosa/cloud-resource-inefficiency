@@ -2,7 +2,7 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Any, Optional, cast
 
 import yaml
 
@@ -35,10 +35,10 @@ class ScanConfig:
     log_file: Optional[str] = None
 
     # Regions to scan
-    regions: list = field(default_factory=lambda: ["us-east-1"])
+    regions: list[str] = field(default_factory=lambda: ["us-east-1"])
 
     # Resource types to scan (empty list = all)
-    resource_types: list = field(default_factory=list)
+    resource_types: list[str] = field(default_factory=list)
 
     @classmethod
     def from_env(cls) -> "ScanConfig":
@@ -75,7 +75,7 @@ class ScanConfig:
             [r.strip() for r in resource_types_str.split(",") if r.strip()] if resource_types_str else []
         )
 
-        return cls(**config_dict)
+        return cls(**cast(dict[str, Any], config_dict))
 
     @classmethod
     def from_yaml_file(cls, filepath: str) -> "ScanConfig":
@@ -97,7 +97,7 @@ class ScanConfig:
             raise FileNotFoundError(f"Configuration file not found: {filepath}")
 
         with open(filepath, "r", encoding="utf-8") as f:
-            config_dict = yaml.safe_load(f) or {}
+            config_dict: dict[str, Any] = yaml.safe_load(f) or {}
 
         # Merge with defaults
         return cls(**config_dict)
@@ -117,7 +117,7 @@ class ScanConfig:
             return cls.from_yaml_file(filepath)
         return cls.from_env()
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert configuration to dictionary."""
         return {
             "lookback_days": self.lookback_days,

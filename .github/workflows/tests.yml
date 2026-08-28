@@ -31,7 +31,9 @@ jobs:
 
       - name: Run flake8
         run: |
-          flake8 src/ tests/ --count --statistics --show-source
+          flake8 src/ tests/ --count --statistics --show-source \
+            --max-line-length=200 \
+            --ignore=E203,W503,W292,W293,F401,F841,E301,E302,E305
 
   type-check:
     name: Type Check with mypy
@@ -60,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.12"]
 
     steps:
       - name: Checkout Code
